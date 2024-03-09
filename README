@@ -1,0 +1,65 @@
+Matei Rares Andrei - 315CC
+Timp implementare - 20 ore
+Punctaj obtinut la rularea testelor pe calcullatorul testelor:
+Teste - 100/100
+Valgrind - 20/20
+Coding style - 15/15
+README - 5/5
+Rezolvare:
+Pentru banda am folosit o structura ce contine o lista dubla cu santinela si
+un deget, operatiile update le-am retinut folosind o structura ce contine
+inceputul si sfarsitul unei cozi, iar pentru undo si redo am folosit cate o
+stiva de tipul unei structuri ce retine adresa unui nod de tipul listei duble
+din banda. Adaugarea si eliminarea celulelor din stiva au loc la inceputul
+acesteia.
+
+Dupa citirea din fisier a fiecarei operatii folosesc o functie ce le codifica
+astfel: un numar intreg din intervalul [0;6] pentru operatiile de tip update
+si -1 pentru restul operatiilor (cele de tip query, undo/redo, execute).
+Fiecarui cuvant din operatiile de tip update i-a fost atribuita o valoare:
+LEFT = 1
+RIGHT = 2
+MOVE = 0
+CHAR = 2
+INSERT = 4
+WRITE = 7
+Initial, codul este declarat cu valoarea -1 iar pentru fiecare cuvant de mai
+sus prezent in operatie este adaugat codul respectiv.
+Astfel, se obtin codificarile urmatoare:
+MOVE_LEFT = -1 + 0 + 1 = 0
+MOVE_RIGHT = -1 + 0 + 2 = 1
+MOVE_LEFT_CHAR = -1 + 0 + 1 + 2 = 2
+MOVE_RIGHT_CHAR = -1 + 0 + 2 + 2 = 3
+INSERT_LEFT = -1 + 4 + 1 = 4
+INSERT_RIGHT = -1 + 4 + 2 = 5
+WRITE = -1 + 7 = 6
+Functia initial verifica daca am citit operatia WRITE, in acest caz adauga 7
+si returneaza codul. Altfel, este verificat daca operatia contine LEFT sau
+RIGHT si adauga la cod valoarea corespunzatoare. Datorita reprezentarii 
+cuvantului MOVE cu 0, este necesara doar verificarea cuvintelor CHAR si 
+INSERT.
+
+Folosind aceste coduri am declarat un vector de pointeri la fuctii in care
+pe pozitia p se afla functia de tip update cu codul p, unde p este un intreg
+in intervalul [0;6].
+
+Daca am citit o functie de tip update atunci ii introduc codul in coada,
+altfel compar sirul de caractere cu celelalte operatii si le rezolv.
+Pentru SHOW si SHOW_CURRENT am folosit functiile respective.
+
+Pentru EXECUTE am facut o copie la deget, am aplicat operatia iar daca
+degetul s-a mutat am introdus fosta lui adresa in stiva undo, la final
+eliminand operatia executata din coada.
+In caz particular, daca a fost executata operatia WRITE atunci am eliberat
+memoria stivelor undo si redo conform unei observatii din cerinta.
+
+Pentru UNDO/REDO am implementat functia stack_top_move ce are ca argumente
+degetul si 2 stive (undo si redo, unde ordinea este data de operatie).
+Pentru UNDO stiva undo este prima si redo a doua, iar pentru REDO stiva redo
+este prima si undo a doua. Functia interschimba adresa din deget cu cea de pe
+varful primei stive, introduce noul varf al primei stive peste varful celei de
+a 2-a stive si apoi sterge varful primei stive.
+
+La final eliberez memoria alocata listelor folosind un macro ce are ca 
+argumente lista si tipul acesteia. Apoi eliberez memoria alocata variabilelor
+ce contin banda si coada si inchid fisierele.
